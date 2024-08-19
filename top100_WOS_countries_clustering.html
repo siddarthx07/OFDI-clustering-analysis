@@ -1,0 +1,258 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 2000px;
+                 height: 2000px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 2000px;
+                 height: 2000px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "gold", "id": "LARSEN \u0026 TOUBRO LIMITED", "label": "LARSEN \u0026 TOUBRO LIMITED", "shape": "dot", "size": 20, "title": "LARSEN \u0026 TOUBRO LIMITED"}, {"color": "red", "id": "SAUDI ARABIA", "label": "SAUDI ARABIA", "shape": "dot", "size": 20, "title": "SAUDI ARABIA"}, {"color": "gold", "id": "JAKSON LIMITED", "label": "JAKSON LIMITED", "shape": "dot", "size": 20, "title": "JAKSON LIMITED"}, {"color": "gold", "id": "GMR POWER AND URBAN INFRA LIMITED", "label": "GMR POWER AND URBAN INFRA LIMITED", "shape": "dot", "size": 20, "title": "GMR POWER AND URBAN INFRA LIMITED"}, {"color": "red", "id": "MAURITIUS", "label": "MAURITIUS", "shape": "dot", "size": 20, "title": "MAURITIUS"}, {"color": "gold", "id": "VEDANTA LIMITED", "label": "VEDANTA LIMITED", "shape": "dot", "size": 20, "title": "VEDANTA LIMITED"}, {"color": "gold", "id": "QUALITY CARE INDIA LIMITED", "label": "QUALITY CARE INDIA LIMITED", "shape": "dot", "size": 20, "title": "QUALITY CARE INDIA LIMITED"}, {"color": "gold", "id": "MAHINDRA \u0026 MAHINDRA LTD", "label": "MAHINDRA \u0026 MAHINDRA LTD", "shape": "dot", "size": 20, "title": "MAHINDRA \u0026 MAHINDRA LTD"}, {"color": "gold", "id": "VARINDERA CONSTRUCTIONS LIMITED", "label": "VARINDERA CONSTRUCTIONS LIMITED", "shape": "dot", "size": 20, "title": "VARINDERA CONSTRUCTIONS LIMITED"}, {"color": "gold", "id": "ULTRATECH CEMENT LTD", "label": "ULTRATECH CEMENT LTD", "shape": "dot", "size": 20, "title": "ULTRATECH CEMENT LTD"}, {"color": "red", "id": "UNITED ARAB EMIRATES", "label": "UNITED ARAB EMIRATES", "shape": "dot", "size": 20, "title": "UNITED ARAB EMIRATES"}, {"color": "gold", "id": "DORF KETAL CHEMICALS INDIA PVT. LTD.,", "label": "DORF KETAL CHEMICALS INDIA PVT. LTD.,", "shape": "dot", "size": 20, "title": "DORF KETAL CHEMICALS INDIA PVT. LTD.,"}, {"color": "gold", "id": "ADANI HARBOUR SERVICES LIMITED", "label": "ADANI HARBOUR SERVICES LIMITED", "shape": "dot", "size": 20, "title": "ADANI HARBOUR SERVICES LIMITED"}, {"color": "gold", "id": "GOKALDAS EXPORTS LIMITED", "label": "GOKALDAS EXPORTS LIMITED", "shape": "dot", "size": 20, "title": "GOKALDAS EXPORTS LIMITED"}, {"color": "gold", "id": "VARUN BEVERAGES LIMITED", "label": "VARUN BEVERAGES LIMITED", "shape": "dot", "size": 20, "title": "VARUN BEVERAGES LIMITED"}, {"color": "gold", "id": "PENGUIN TRADING AND AGENCIES LIMITED", "label": "PENGUIN TRADING AND AGENCIES LIMITED", "shape": "dot", "size": 20, "title": "PENGUIN TRADING AND AGENCIES LIMITED"}, {"color": "gold", "id": "TITAN COMPANY LIMITED", "label": "TITAN COMPANY LIMITED", "shape": "dot", "size": 20, "title": "TITAN COMPANY LIMITED"}, {"color": "gold", "id": "APL APOLLO TUBES\u00a0 LIMITED", "label": "APL APOLLO TUBES\u00a0 LIMITED", "shape": "dot", "size": 20, "title": "APL APOLLO TUBES\u00a0 LIMITED"}, {"color": "gold", "id": "BRAINBEES SOLUTIONS LIMITED", "label": "BRAINBEES SOLUTIONS LIMITED", "shape": "dot", "size": 20, "title": "BRAINBEES SOLUTIONS LIMITED"}, {"color": "gold", "id": "JAGKALYAN COMMERCIAL PVT LTD", "label": "JAGKALYAN COMMERCIAL PVT LTD", "shape": "dot", "size": 20, "title": "JAGKALYAN COMMERCIAL PVT LTD"}, {"color": "gold", "id": "NEEL METAL PRODUCTS LTD", "label": "NEEL METAL PRODUCTS LTD", "shape": "dot", "size": 20, "title": "NEEL METAL PRODUCTS LTD"}, {"color": "gold", "id": "PARVATINANDAN GOLD ENTERPRISES PRIVATE LIMITED", "label": "PARVATINANDAN GOLD ENTERPRISES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "PARVATINANDAN GOLD ENTERPRISES PRIVATE LIMITED"}, {"color": "gold", "id": "ATRIA PARTNERS", "label": "ATRIA PARTNERS", "shape": "dot", "size": 20, "title": "ATRIA PARTNERS"}, {"color": "gold", "id": "RELIANCE STRATEGIC BUSINESS VENTURES LIMITED", "label": "RELIANCE STRATEGIC BUSINESS VENTURES LIMITED", "shape": "dot", "size": 20, "title": "RELIANCE STRATEGIC BUSINESS VENTURES LIMITED"}, {"color": "gold", "id": "SUDHIR POWER LIMITED", "label": "SUDHIR POWER LIMITED", "shape": "dot", "size": 20, "title": "SUDHIR POWER LIMITED"}, {"color": "gold", "id": "STAR BLUE JEWELS PRIVATE LIMITED", "label": "STAR BLUE JEWELS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "STAR BLUE JEWELS PRIVATE LIMITED"}, {"color": "gold", "id": "AFCONS INFRASTRUCTURE LTD", "label": "AFCONS INFRASTRUCTURE LTD", "shape": "dot", "size": 20, "title": "AFCONS INFRASTRUCTURE LTD"}, {"color": "gold", "id": "SUMINTER INDIA ORGANICS PRIVATE LIMITED", "label": "SUMINTER INDIA ORGANICS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "SUMINTER INDIA ORGANICS PRIVATE LIMITED"}, {"color": "gold", "id": "RIPLEY AND COMPANY STEVEDORING \u0026 HANDLING PVT LTD", "label": "RIPLEY AND COMPANY STEVEDORING \u0026 HANDLING PVT LTD", "shape": "dot", "size": 20, "title": "RIPLEY AND COMPANY STEVEDORING \u0026 HANDLING PVT LTD"}, {"color": "gold", "id": "SOHA VENTURES LLP", "label": "SOHA VENTURES LLP", "shape": "dot", "size": 20, "title": "SOHA VENTURES LLP"}, {"color": "gold", "id": "CASAGRAND PREMIER BUILDER LIMITED", "label": "CASAGRAND PREMIER BUILDER LIMITED", "shape": "dot", "size": 20, "title": "CASAGRAND PREMIER BUILDER LIMITED"}, {"color": "gold", "id": "GLOBAL SURFACES LIMITED", "label": "GLOBAL SURFACES LIMITED", "shape": "dot", "size": 20, "title": "GLOBAL SURFACES LIMITED"}, {"color": "gold", "id": "GENSOL ENGINEERING LIMITED", "label": "GENSOL ENGINEERING LIMITED", "shape": "dot", "size": 20, "title": "GENSOL ENGINEERING LIMITED"}, {"color": "gold", "id": "EASTMAN AUTO \u0026 POWER LIMITED", "label": "EASTMAN AUTO \u0026 POWER LIMITED", "shape": "dot", "size": 20, "title": "EASTMAN AUTO \u0026 POWER LIMITED"}, {"color": "gold", "id": "ADANI\u00a0 PORT AND SPECIAL ECONOMIC ZONE LTD", "label": "ADANI\u00a0 PORT AND SPECIAL ECONOMIC ZONE LTD", "shape": "dot", "size": 20, "title": "ADANI\u00a0 PORT AND SPECIAL ECONOMIC ZONE LTD"}, {"color": "red", "id": "SINGAPORE", "label": "SINGAPORE", "shape": "dot", "size": 20, "title": "SINGAPORE"}, {"color": "gold", "id": "AFFLE (INDIA) LIMITED", "label": "AFFLE (INDIA) LIMITED", "shape": "dot", "size": 20, "title": "AFFLE (INDIA) LIMITED"}, {"color": "gold", "id": "TVS MOTOR COMPANY LTD", "label": "TVS MOTOR COMPANY LTD", "shape": "dot", "size": 20, "title": "TVS MOTOR COMPANY LTD"}, {"color": "gold", "id": "PAHARPUR COOLING TOWERS LIMITED", "label": "PAHARPUR COOLING TOWERS LIMITED", "shape": "dot", "size": 20, "title": "PAHARPUR COOLING TOWERS LIMITED"}, {"color": "gold", "id": "ISGEC HEAVY ENGINEERING LIMITED", "label": "ISGEC HEAVY ENGINEERING LIMITED", "shape": "dot", "size": 20, "title": "ISGEC HEAVY ENGINEERING LIMITED"}, {"color": "gold", "id": "MINDA INFRASTRUCTURE LLP", "label": "MINDA INFRASTRUCTURE LLP", "shape": "dot", "size": 20, "title": "MINDA INFRASTRUCTURE LLP"}, {"color": "gold", "id": "PLANETCAST MEDIA SERVICES LIMITED", "label": "PLANETCAST MEDIA SERVICES LIMITED", "shape": "dot", "size": 20, "title": "PLANETCAST MEDIA SERVICES LIMITED"}, {"color": "gold", "id": "IIFL HOLDINGS LIMITED", "label": "IIFL HOLDINGS LIMITED", "shape": "dot", "size": 20, "title": "IIFL HOLDINGS LIMITED"}, {"color": "gold", "id": "DEVYANI INTERNATIONAL LIMITED", "label": "DEVYANI INTERNATIONAL LIMITED", "shape": "dot", "size": 20, "title": "DEVYANI INTERNATIONAL LIMITED"}, {"color": "gold", "id": "MYTRAH BHAANUJ POWER PRIVATE LIMITED", "label": "MYTRAH BHAANUJ POWER PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "MYTRAH BHAANUJ POWER PRIVATE LIMITED"}, {"color": "gold", "id": "QUALITYKIOSK TECHNOLOGIES PVT. LTD.", "label": "QUALITYKIOSK TECHNOLOGIES PVT. LTD.", "shape": "dot", "size": 20, "title": "QUALITYKIOSK TECHNOLOGIES PVT. LTD."}, {"color": "gold", "id": "SANGHVI BEAUTY AND TECHNOLOGIES PRIVATE LIMITED", "label": "SANGHVI BEAUTY AND TECHNOLOGIES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "SANGHVI BEAUTY AND TECHNOLOGIES PRIVATE LIMITED"}, {"color": "gold", "id": "NODWIN GAMING PRIVATE LIMITED", "label": "NODWIN GAMING PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "NODWIN GAMING PRIVATE LIMITED"}, {"color": "gold", "id": "THRIVENI EARTH MOVERS P LTD", "label": "THRIVENI EARTH MOVERS P LTD", "shape": "dot", "size": 20, "title": "THRIVENI EARTH MOVERS P LTD"}, {"color": "gold", "id": "NEPHROCARE HEALTH SERVICES PRIVATE LIMITED", "label": "NEPHROCARE HEALTH SERVICES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "NEPHROCARE HEALTH SERVICES PRIVATE LIMITED"}, {"color": "gold", "id": "GLENMARK PHARMACEUTICALS LTD.", "label": "GLENMARK PHARMACEUTICALS LTD.", "shape": "dot", "size": 20, "title": "GLENMARK PHARMACEUTICALS LTD."}, {"color": "red", "id": "SWITZERLAND", "label": "SWITZERLAND", "shape": "dot", "size": 20, "title": "SWITZERLAND"}, {"color": "gold", "id": "LUPIN LTD", "label": "LUPIN LTD", "shape": "dot", "size": 20, "title": "LUPIN LTD"}, {"color": "gold", "id": "DECCAN ADVANCED SCIENCES PRIVATE LIMITED", "label": "DECCAN ADVANCED SCIENCES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "DECCAN ADVANCED SCIENCES PRIVATE LIMITED"}, {"color": "gold", "id": "SENTISS PHARMA PRIVATE LIMITED", "label": "SENTISS PHARMA PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "SENTISS PHARMA PRIVATE LIMITED"}, {"color": "gold", "id": "JUBILANT FOOD WORKS LIMITED", "label": "JUBILANT FOOD WORKS LIMITED", "shape": "dot", "size": 20, "title": "JUBILANT FOOD WORKS LIMITED"}, {"color": "red", "id": "NETHERLANDS", "label": "NETHERLANDS", "shape": "dot", "size": 20, "title": "NETHERLANDS"}, {"color": "gold", "id": "PIRAMAL PHARMA LIMITED", "label": "PIRAMAL PHARMA LIMITED", "shape": "dot", "size": 20, "title": "PIRAMAL PHARMA LIMITED"}, {"color": "gold", "id": "JSW STEEL LTD", "label": "JSW STEEL LTD", "shape": "dot", "size": 20, "title": "JSW STEEL LTD"}, {"color": "gold", "id": "MEGHA ENGINEERING AND INFRASTRUCTURES LTD", "label": "MEGHA ENGINEERING AND INFRASTRUCTURES LTD", "shape": "dot", "size": 20, "title": "MEGHA ENGINEERING AND INFRASTRUCTURES LTD"}, {"color": "gold", "id": "JSW STEEL LIMITED", "label": "JSW STEEL LIMITED", "shape": "dot", "size": 20, "title": "JSW STEEL LIMITED"}, {"color": "gold", "id": "RELIANCE NEW ENERGY LIMITED", "label": "RELIANCE NEW ENERGY LIMITED", "shape": "dot", "size": 20, "title": "RELIANCE NEW ENERGY LIMITED"}, {"color": "red", "id": "NORWAY", "label": "NORWAY", "shape": "dot", "size": 20, "title": "NORWAY"}, {"color": "gold", "id": "INFIFRESH FOODS PRIVATE LIMITED", "label": "INFIFRESH FOODS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "INFIFRESH FOODS PRIVATE LIMITED"}, {"color": "gold", "id": "BHARAT FORGE LTD.", "label": "BHARAT FORGE LTD.", "shape": "dot", "size": 20, "title": "BHARAT FORGE LTD."}, {"color": "red", "id": "UNITED STATES OF AMERICA", "label": "UNITED STATES OF AMERICA", "shape": "dot", "size": 20, "title": "UNITED STATES OF AMERICA"}, {"color": "red", "id": "GERMANY", "label": "GERMANY", "shape": "dot", "size": 20, "title": "GERMANY"}, {"color": "gold", "id": "TATA SONS PRIVATE LIMITED", "label": "TATA SONS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "TATA SONS PRIVATE LIMITED"}, {"color": "gold", "id": "TARSONS PRODUCTS LIMITED", "label": "TARSONS PRODUCTS LIMITED", "shape": "dot", "size": 20, "title": "TARSONS PRODUCTS LIMITED"}, {"color": "gold", "id": "AVET LIFESCIENCES PRIVATE LIMITED", "label": "AVET LIFESCIENCES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "AVET LIFESCIENCES PRIVATE LIMITED"}, {"color": "gold", "id": "GODREJ \u0026 BOYCE MANUFACTURING COMPANY LIMITED", "label": "GODREJ \u0026 BOYCE MANUFACTURING COMPANY LIMITED", "shape": "dot", "size": 20, "title": "GODREJ \u0026 BOYCE MANUFACTURING COMPANY LIMITED"}, {"color": "gold", "id": "CYIENT LIMITED", "label": "CYIENT LIMITED", "shape": "dot", "size": 20, "title": "CYIENT LIMITED"}, {"color": "gold", "id": "INDIAN COMPRESSORS LIMITED", "label": "INDIAN COMPRESSORS LIMITED", "shape": "dot", "size": 20, "title": "INDIAN COMPRESSORS LIMITED"}, {"color": "gold", "id": "SUNDARAM-CLAYTON LIMITED", "label": "SUNDARAM-CLAYTON LIMITED", "shape": "dot", "size": 20, "title": "SUNDARAM-CLAYTON LIMITED"}, {"color": "gold", "id": "ALEMBIC PHARMACEUTICALS LIMITED", "label": "ALEMBIC PHARMACEUTICALS LIMITED", "shape": "dot", "size": 20, "title": "ALEMBIC PHARMACEUTICALS LIMITED"}, {"color": "gold", "id": "L S MILLS LTD", "label": "L S MILLS LTD", "shape": "dot", "size": 20, "title": "L S MILLS LTD"}, {"color": "gold", "id": "RSB TRANSMISSIONS I LTD", "label": "RSB TRANSMISSIONS I LTD", "shape": "dot", "size": 20, "title": "RSB TRANSMISSIONS I LTD"}, {"color": "gold", "id": "MPS LIMITED", "label": "MPS LIMITED", "shape": "dot", "size": 20, "title": "MPS LIMITED"}, {"color": "gold", "id": "SUVEN LIFE SCIENCES LIMITED", "label": "SUVEN LIFE SCIENCES LIMITED", "shape": "dot", "size": 20, "title": "SUVEN LIFE SCIENCES LIMITED"}, {"color": "gold", "id": "LATENT VIEW ANALYTICS PRIVATE LIMITED", "label": "LATENT VIEW ANALYTICS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "LATENT VIEW ANALYTICS PRIVATE LIMITED"}, {"color": "gold", "id": "ENZENE BIOSCIENCES LIMITED", "label": "ENZENE BIOSCIENCES LIMITED", "shape": "dot", "size": 20, "title": "ENZENE BIOSCIENCES LIMITED"}, {"color": "gold", "id": "HAVELLS INDIA LIMITED", "label": "HAVELLS INDIA LIMITED", "shape": "dot", "size": 20, "title": "HAVELLS INDIA LIMITED"}, {"color": "gold", "id": "IPCA LABORATORIES LIMITED", "label": "IPCA LABORATORIES LIMITED", "shape": "dot", "size": 20, "title": "IPCA LABORATORIES LIMITED"}, {"color": "gold", "id": "KAYNES TECHNOLOGIES INDIA LTD", "label": "KAYNES TECHNOLOGIES INDIA LTD", "shape": "dot", "size": 20, "title": "KAYNES TECHNOLOGIES INDIA LTD"}, {"color": "gold", "id": "BOROSIL RENEWABLES LIMITED", "label": "BOROSIL RENEWABLES LIMITED", "shape": "dot", "size": 20, "title": "BOROSIL RENEWABLES LIMITED"}, {"color": "gold", "id": "MAYANK AUTO ENGINEERS PVT LTD", "label": "MAYANK AUTO ENGINEERS PVT LTD", "shape": "dot", "size": 20, "title": "MAYANK AUTO ENGINEERS PVT LTD"}, {"color": "gold", "id": "TQ CERT SERVICES PRIVATE LIMITED", "label": "TQ CERT SERVICES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "TQ CERT SERVICES PRIVATE LIMITED"}, {"color": "gold", "id": "CALIBRE CHEMICALS PVT. LTD.", "label": "CALIBRE CHEMICALS PVT. LTD.", "shape": "dot", "size": 20, "title": "CALIBRE CHEMICALS PVT. LTD."}, {"color": "gold", "id": "JYOTI CNC AUTOMATION P LTD", "label": "JYOTI CNC AUTOMATION P LTD", "shape": "dot", "size": 20, "title": "JYOTI CNC AUTOMATION P LTD"}, {"color": "red", "id": "FRANCE", "label": "FRANCE", "shape": "dot", "size": 20, "title": "FRANCE"}, {"color": "red", "id": "UNITED KINGDOM", "label": "UNITED KINGDOM", "shape": "dot", "size": 20, "title": "UNITED KINGDOM"}, {"color": "gold", "id": "GENESIS PARKS LLP", "label": "GENESIS PARKS LLP", "shape": "dot", "size": 20, "title": "GENESIS PARKS LLP"}, {"color": "gold", "id": "NIIT LEARNING SYSTEMS LIMITED", "label": "NIIT LEARNING SYSTEMS LIMITED", "shape": "dot", "size": 20, "title": "NIIT LEARNING SYSTEMS LIMITED"}, {"color": "gold", "id": "KARAM HOLDING PRIVATE LIMITED", "label": "KARAM HOLDING PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "KARAM HOLDING PRIVATE LIMITED"}, {"color": "gold", "id": "VENKATESHWARA HATCHERIES PVT\u00a0 LTD", "label": "VENKATESHWARA HATCHERIES PVT\u00a0 LTD", "shape": "dot", "size": 20, "title": "VENKATESHWARA HATCHERIES PVT\u00a0 LTD"}, {"color": "gold", "id": "MADHURIMA INTERNATIONAL P LTD", "label": "MADHURIMA INTERNATIONAL P LTD", "shape": "dot", "size": 20, "title": "MADHURIMA INTERNATIONAL P LTD"}, {"color": "gold", "id": "CIPLA LTD.", "label": "CIPLA LTD.", "shape": "dot", "size": 20, "title": "CIPLA LTD."}, {"color": "gold", "id": "AGRATAS ENERGY STORAGE SOLUTIONS PRIVATE LIMITED", "label": "AGRATAS ENERGY STORAGE SOLUTIONS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "AGRATAS ENERGY STORAGE SOLUTIONS PRIVATE LIMITED"}, {"color": "gold", "id": "TATA CONSUMER PRODUCTS LIMITED", "label": "TATA CONSUMER PRODUCTS LIMITED", "shape": "dot", "size": 20, "title": "TATA CONSUMER PRODUCTS LIMITED"}, {"color": "red", "id": "VIETNAM", "label": "VIETNAM", "shape": "dot", "size": 20, "title": "VIETNAM"}, {"color": "gold", "id": "ELGI EQUIPMENTS LTD", "label": "ELGI EQUIPMENTS LTD", "shape": "dot", "size": 20, "title": "ELGI EQUIPMENTS LTD"}, {"color": "red", "id": "BELGIUM", "label": "BELGIUM", "shape": "dot", "size": 20, "title": "BELGIUM"}, {"color": "gold", "id": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED", "label": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED", "shape": "dot", "size": 20, "title": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED"}, {"color": "red", "id": "IFSC GIFT CITY", "label": "IFSC GIFT CITY", "shape": "dot", "size": 20, "title": "IFSC GIFT CITY"}, {"color": "gold", "id": "ONGC VIDESH LTD.", "label": "ONGC VIDESH LTD.", "shape": "dot", "size": 20, "title": "ONGC VIDESH LTD."}, {"color": "red", "id": "BRITISH VIRGIN ISLANDS", "label": "BRITISH VIRGIN ISLANDS", "shape": "dot", "size": 20, "title": "BRITISH VIRGIN ISLANDS"}, {"color": "gold", "id": "OIL INDIA LIMITED", "label": "OIL INDIA LIMITED", "shape": "dot", "size": 20, "title": "OIL INDIA LIMITED"}, {"color": "gold", "id": "EMBASSY SHELTERS PRIVATE LIMITED", "label": "EMBASSY SHELTERS PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "EMBASSY SHELTERS PRIVATE LIMITED"}, {"color": "red", "id": "CYPRUS", "label": "CYPRUS", "shape": "dot", "size": 20, "title": "CYPRUS"}, {"color": "gold", "id": "KEMWELL BIOPHARMA PRIVATE LIMITED", "label": "KEMWELL BIOPHARMA PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "KEMWELL BIOPHARMA PRIVATE LIMITED"}, {"color": "red", "id": "IRELAND", "label": "IRELAND", "shape": "dot", "size": 20, "title": "IRELAND"}, {"color": "gold", "id": "TRANSASIA BIO MEDICALS LIMITED", "label": "TRANSASIA BIO MEDICALS LIMITED", "shape": "dot", "size": 20, "title": "TRANSASIA BIO MEDICALS LIMITED"}, {"color": "red", "id": "SOUTH AFRICA", "label": "SOUTH AFRICA", "shape": "dot", "size": 20, "title": "SOUTH AFRICA"}, {"color": "gold", "id": "RPSG SPORTS VENTURES PRIVATE LIMITED", "label": "RPSG SPORTS VENTURES PRIVATE LIMITED", "shape": "dot", "size": 20, "title": "RPSG SPORTS VENTURES PRIVATE LIMITED"}, {"color": "gold", "id": "ROSY BLUE (INDIA) PVT LTD", "label": "ROSY BLUE (INDIA) PVT LTD", "shape": "dot", "size": 20, "title": "ROSY BLUE (INDIA) PVT LTD"}, {"color": "red", "id": "HONGKONG", "label": "HONGKONG", "shape": "dot", "size": 20, "title": "HONGKONG"}, {"color": "gold", "id": "MEDHA SERVO DRIVES PVT LTD", "label": "MEDHA SERVO DRIVES PVT LTD", "shape": "dot", "size": 20, "title": "MEDHA SERVO DRIVES PVT LTD"}, {"color": "red", "id": "ITALY", "label": "ITALY", "shape": "dot", "size": 20, "title": "ITALY"}, {"color": "red", "id": "MONGOLIA", "label": "MONGOLIA", "shape": "dot", "size": 20, "title": "MONGOLIA"}, {"color": "gold", "id": "NCC LIMITED", "label": "NCC LIMITED", "shape": "dot", "size": 20, "title": "NCC LIMITED"}, {"color": "red", "id": "OMAN", "label": "OMAN", "shape": "dot", "size": 20, "title": "OMAN"}, {"color": "red", "id": "CHINA", "label": "CHINA", "shape": "dot", "size": 20, "title": "CHINA"}, {"color": "gold", "id": "EICHER MOTORS LTD", "label": "EICHER MOTORS LTD", "shape": "dot", "size": 20, "title": "EICHER MOTORS LTD"}, {"color": "red", "id": "THAILAND", "label": "THAILAND", "shape": "dot", "size": 20, "title": "THAILAND"}, {"color": "gold", "font": {"size": 50}, "id": "Graph Legend", "label": "Graph Legend", "physics": false, "shape": "dot", "size": 0, "x": -1900, "y": "-650px"}, {"color": "red", "id": "Country Node", "label": "Country Node", "physics": false, "shape": "dot", "size": 25, "title": "Country Node", "x": -1900, "y": "-450px"}, {"color": "gold", "id": "Company Name (part of top 100 firms)", "label": "Company Name (part of top 100 firms)", "physics": false, "shape": "dot", "size": 25, "title": "Company Name", "x": -1900, "y": "-350px"}]);
+                  edges = new vis.DataSet([{"from": "LARSEN \u0026 TOUBRO LIMITED", "to": "SAUDI ARABIA", "width": 1}, {"from": "SAUDI ARABIA", "to": "JAKSON LIMITED", "width": 1}, {"from": "GMR POWER AND URBAN INFRA LIMITED", "to": "MAURITIUS", "width": 1}, {"from": "MAURITIUS", "to": "VEDANTA LIMITED", "width": 1}, {"from": "MAURITIUS", "to": "QUALITY CARE INDIA LIMITED", "width": 1}, {"from": "MAURITIUS", "to": "MAHINDRA \u0026 MAHINDRA LTD", "width": 1}, {"from": "MAURITIUS", "to": "VARINDERA CONSTRUCTIONS LIMITED", "width": 1}, {"from": "ULTRATECH CEMENT LTD", "to": "UNITED ARAB EMIRATES", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "DORF KETAL CHEMICALS INDIA PVT. LTD.,", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "ADANI HARBOUR SERVICES LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "GOKALDAS EXPORTS LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "VARUN BEVERAGES LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "PENGUIN TRADING AND AGENCIES LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "TITAN COMPANY LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "APL APOLLO TUBES\u00a0 LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "BRAINBEES SOLUTIONS LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "JAGKALYAN COMMERCIAL PVT LTD", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "NEEL METAL PRODUCTS LTD", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "PARVATINANDAN GOLD ENTERPRISES PRIVATE LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "ATRIA PARTNERS", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "RELIANCE STRATEGIC BUSINESS VENTURES LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "SUDHIR POWER LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "STAR BLUE JEWELS PRIVATE LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "AFCONS INFRASTRUCTURE LTD", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "SUMINTER INDIA ORGANICS PRIVATE LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "RIPLEY AND COMPANY STEVEDORING \u0026 HANDLING PVT LTD", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "SOHA VENTURES LLP", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "CASAGRAND PREMIER BUILDER LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "GLOBAL SURFACES LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "GENSOL ENGINEERING LIMITED", "width": 1}, {"from": "UNITED ARAB EMIRATES", "to": "EASTMAN AUTO \u0026 POWER LIMITED", "width": 1}, {"from": "ADANI\u00a0 PORT AND SPECIAL ECONOMIC ZONE LTD", "to": "SINGAPORE", "width": 1}, {"from": "SINGAPORE", "to": "AFFLE (INDIA) LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "TVS MOTOR COMPANY LTD", "width": 1}, {"from": "SINGAPORE", "to": "PAHARPUR COOLING TOWERS LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "ISGEC HEAVY ENGINEERING LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "MINDA INFRASTRUCTURE LLP", "width": 1}, {"from": "SINGAPORE", "to": "PLANETCAST MEDIA SERVICES LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "IIFL HOLDINGS LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "DEVYANI INTERNATIONAL LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "MYTRAH BHAANUJ POWER PRIVATE LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "QUALITYKIOSK TECHNOLOGIES PVT. LTD.", "width": 1}, {"from": "SINGAPORE", "to": "SANGHVI BEAUTY AND TECHNOLOGIES PRIVATE LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "NODWIN GAMING PRIVATE LIMITED", "width": 1}, {"from": "SINGAPORE", "to": "THRIVENI EARTH MOVERS P LTD", "width": 1}, {"from": "SINGAPORE", "to": "NEPHROCARE HEALTH SERVICES PRIVATE LIMITED", "width": 1}, {"from": "GLENMARK PHARMACEUTICALS LTD.", "to": "SWITZERLAND", "width": 1}, {"from": "SWITZERLAND", "to": "LUPIN LTD", "width": 1}, {"from": "SWITZERLAND", "to": "DECCAN ADVANCED SCIENCES PRIVATE LIMITED", "width": 1}, {"from": "SWITZERLAND", "to": "SENTISS PHARMA PRIVATE LIMITED", "width": 1}, {"from": "JUBILANT FOOD WORKS LIMITED", "to": "NETHERLANDS", "width": 1}, {"from": "NETHERLANDS", "to": "LUPIN LTD", "width": 1}, {"from": "NETHERLANDS", "to": "PIRAMAL PHARMA LIMITED", "width": 1}, {"from": "NETHERLANDS", "to": "JSW STEEL LTD", "width": 1}, {"from": "NETHERLANDS", "to": "MEGHA ENGINEERING AND INFRASTRUCTURES LTD", "width": 1}, {"from": "NETHERLANDS", "to": "JSW STEEL LIMITED", "width": 1}, {"from": "RELIANCE NEW ENERGY LIMITED", "to": "NORWAY", "width": 1}, {"from": "NORWAY", "to": "INFIFRESH FOODS PRIVATE LIMITED", "width": 1}, {"from": "BHARAT FORGE LTD.", "to": "UNITED STATES OF AMERICA", "width": 1}, {"from": "BHARAT FORGE LTD.", "to": "GERMANY", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "TATA SONS PRIVATE LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "TARSONS PRODUCTS LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "AVET LIFESCIENCES PRIVATE LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "GODREJ \u0026 BOYCE MANUFACTURING COMPANY LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "CYIENT LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "INDIAN COMPRESSORS LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "SUNDARAM-CLAYTON LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "ALEMBIC PHARMACEUTICALS LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "L S MILLS LTD", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "RSB TRANSMISSIONS I LTD", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "MPS LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "SUVEN LIFE SCIENCES LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "LATENT VIEW ANALYTICS PRIVATE LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "ENZENE BIOSCIENCES LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "HAVELLS INDIA LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "IPCA LABORATORIES LIMITED", "width": 1}, {"from": "UNITED STATES OF AMERICA", "to": "KAYNES TECHNOLOGIES INDIA LTD", "width": 1}, {"from": "GERMANY", "to": "NEEL METAL PRODUCTS LTD", "width": 1}, {"from": "GERMANY", "to": "BOROSIL RENEWABLES LIMITED", "width": 1}, {"from": "GERMANY", "to": "MAYANK AUTO ENGINEERS PVT LTD", "width": 1}, {"from": "GERMANY", "to": "TQ CERT SERVICES PRIVATE LIMITED", "width": 1}, {"from": "GERMANY", "to": "CALIBRE CHEMICALS PVT. LTD.", "width": 1}, {"from": "JYOTI CNC AUTOMATION P LTD", "to": "FRANCE", "width": 1}, {"from": "TATA SONS PRIVATE LIMITED", "to": "UNITED KINGDOM", "width": 1}, {"from": "UNITED KINGDOM", "to": "GENESIS PARKS LLP", "width": 1}, {"from": "UNITED KINGDOM", "to": "NIIT LEARNING SYSTEMS LIMITED", "width": 1}, {"from": "UNITED KINGDOM", "to": "SUDHIR POWER LIMITED", "width": 1}, {"from": "UNITED KINGDOM", "to": "KARAM HOLDING PRIVATE LIMITED", "width": 1}, {"from": "UNITED KINGDOM", "to": "VENKATESHWARA HATCHERIES PVT\u00a0 LTD", "width": 1}, {"from": "UNITED KINGDOM", "to": "MADHURIMA INTERNATIONAL P LTD", "width": 1}, {"from": "UNITED KINGDOM", "to": "CIPLA LTD.", "width": 1}, {"from": "UNITED KINGDOM", "to": "AGRATAS ENERGY STORAGE SOLUTIONS PRIVATE LIMITED", "width": 1}, {"from": "TATA CONSUMER PRODUCTS LIMITED", "to": "VIETNAM", "width": 1}, {"from": "ELGI EQUIPMENTS LTD", "to": "BELGIUM", "width": 1}, {"from": "NATIONAL STOCK EXCHANGE OF INDIA LIMITED", "to": "IFSC GIFT CITY", "width": 1}, {"from": "IFSC GIFT CITY", "to": "ONGC VIDESH LTD.", "width": 1}, {"from": "ONGC VIDESH LTD.", "to": "BRITISH VIRGIN ISLANDS", "width": 1}, {"from": "BRITISH VIRGIN ISLANDS", "to": "OIL INDIA LIMITED", "width": 1}, {"from": "EMBASSY SHELTERS PRIVATE LIMITED", "to": "CYPRUS", "width": 1}, {"from": "CYPRUS", "to": "KEMWELL BIOPHARMA PRIVATE LIMITED", "width": 1}, {"from": "NIIT LEARNING SYSTEMS LIMITED", "to": "IRELAND", "width": 1}, {"from": "IRELAND", "to": "TRANSASIA BIO MEDICALS LIMITED", "width": 1}, {"from": "RELIANCE STRATEGIC BUSINESS VENTURES LIMITED", "to": "SOUTH AFRICA", "width": 1}, {"from": "SOUTH AFRICA", "to": "RPSG SPORTS VENTURES PRIVATE LIMITED", "width": 1}, {"from": "ROSY BLUE (INDIA) PVT LTD", "to": "HONGKONG", "width": 1}, {"from": "MEDHA SERVO DRIVES PVT LTD", "to": "ITALY", "width": 1}, {"from": "MEGHA ENGINEERING AND INFRASTRUCTURES LTD", "to": "MONGOLIA", "width": 1}, {"from": "NCC LIMITED", "to": "OMAN", "width": 1}, {"from": "TQ CERT SERVICES PRIVATE LIMITED", "to": "CHINA", "width": 1}, {"from": "EICHER MOTORS LTD", "to": "THAILAND", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 100,
+            "springConstant": 0.05,
+            "springLength": 200
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
