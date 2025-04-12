@@ -29,18 +29,7 @@ This project performs clustering-based analysis on **Outward Foreign Direct Inve
 ## 📁 Project Structure
 
 ```bash
-OFDI-clustering-analysis/
-├── data/
-│   └── ofdi_data.csv
-├── notebooks/
-│   ├── 01_data_cleaning.ipynb
-│   ├── 02_clustering_kmeans.ipynb
-│   ├── 03_clustering_hierarchical.ipynb
-│   ├── 04_dbscan_pca_visualization.ipynb
-├── results/
-│   └── cluster_maps/
-├── requirements.txt
-└── README.md
+
 ⚙️ Setup Instructions
 1. Clone the Repository
 git clone https://github.com/siddarthx07/OFDI-clustering-analysis.git
